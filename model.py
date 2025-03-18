@@ -1,13 +1,8 @@
 import torch
 from torch.functional import F
 
-DIGITS = "0123456789"
-OPERATORS = "+"
-VOID_TOKEN = " "  # for padding
-EQUAL_TOKEN = "="
-END_TOKEN = "."
-VOCAB = END_TOKEN + DIGITS + OPERATORS + VOID_TOKEN + EQUAL_TOKEN
-VOCAB_SIZE = len(VOCAB)
+import vocab
+
 N_EMBED = 10
 N_HIDDEN = 10
 CONTEXT_SIZE = 18
@@ -17,11 +12,11 @@ class Model(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.seq = torch.nn.Sequential(
-            torch.nn.Embedding(VOCAB_SIZE, N_EMBED),
+            torch.nn.Embedding(vocab.VOCAB_SIZE, N_EMBED),
             torch.nn.Flatten(),
             torch.nn.Linear(N_EMBED * CONTEXT_SIZE, N_HIDDEN),
             torch.nn.ReLU(),
-            torch.nn.Linear(N_HIDDEN, len(DIGITS) + 1),  # +1 for end token (dot)
+            torch.nn.Linear(N_HIDDEN, len(vocab.DIGITS) + 1),  # +1 for end token (dot)
         )
         self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
 
@@ -41,3 +36,12 @@ class Model(torch.nn.Module):
         with torch.no_grad():
             logits = self.seq(x)
             return torch.argmax(logits, dim=1)
+
+    def generate(self, x):
+        y = self.predict(x.view(1, x.shape[0]))
+        for i in range(x.tolist().index(vocab.stoi(vocab.VOID_TOKEN)[0]), len(x)):
+            if vocab.itos(y.item()) == vocab.END_TOKEN:
+                break
+            x[i] = y.item()
+            y = self.predict(x.view(1, x.shape[0]))
+        return x
