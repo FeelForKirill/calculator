@@ -3,8 +3,8 @@ from torch.functional import F
 
 import vocab
 
-N_EMBED = 10
-N_HIDDEN = 10
+N_EMBED = 20
+N_HIDDEN = 100
 CONTEXT_SIZE = 18
 
 
