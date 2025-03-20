@@ -4,12 +4,12 @@ import sys
 
 import torch
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import utils
 import vocab
 
 random.seed(118)
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def make_dataset():
