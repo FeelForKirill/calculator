@@ -20,5 +20,5 @@ def make_exp():
     c = a + b
     expr = list(f"{a}+{b}=")
     expr += [vocab.VOID_TOKEN] * (model.CONTEXT_SIZE - len(expr))
-    solution = list(f"{c}.")
+    solution = list(str(c)[::-1]) + [vocab.END_TOKEN]
     return expr, solution
