@@ -7,9 +7,10 @@ import vocab
 def make_sample():
     x, solution = make_exp()
     y = solution[0]
+    void_idx = x.index(vocab.VOID_TOKEN)
     yield list(x), y
     for i, (p, c) in enumerate(zip(solution, solution[1:])):
-        x[len(x) + i] = p
+        x[void_idx + i] = p
         yield list(x), c
 
 
